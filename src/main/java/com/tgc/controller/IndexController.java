@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.tgc.dao.UserDao;
 import com.tgc.db1.dao.UserMapperTest01;
 import com.tgc.db1.service.UserServiceTest01;
 import com.tgc.db2.dao.UserMapperTest02;
@@ -22,6 +23,9 @@ public class IndexController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserDao userDao;
 	
 	@Autowired
 	private UserMapper userMapper;
@@ -101,6 +105,48 @@ public class IndexController {
 	}
 	//==============================================
 	
+	//==================SpringDataJpa==========================
+	/**
+	 * 测试SpringDataJpa配置数据源
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/testSpringDataJpa")
+	public String testSpringDataJpa() {
+		User user =userDao.findOne(1);
+		//http://localhost:8888/tgc/testSpringDataJpa
+		return user.getName();
+	}
+	/**
+	 * 测试SpringDataJpa插入数据到数据源中
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/createUserBySpringDataJpa")
+	public String createUserBySpringDataJpa()  {
+        User newUser = new User();
+        newUser.setName("test1");
+        userDao.save(newUser);
+        return newUser.getId().toString();
+      //http://localhost:8888/tgc/createUserBySpringDataJpa
+    }
+	
+	/**
+	 * 使用Atomikos的userDao 插入数据库 test1,使用jdbcTemplate2插入数据库  test2
+	 * 测试是否事务回滚。    可以回滚！！！！！！  
+	 * @param name
+	 * @param age
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/createUser4")
+	public String createUser4(String name, Integer age) {
+		userService.insertTest004(name, age);
+		//http://localhost:8888/tgc/createUser4?name=tgc44&age=26
+		return "success";
+	}
+	//============================================
+	
 	
 	//============使用mybatis=========================
 	@ResponseBody
@@ -113,7 +159,7 @@ public class IndexController {
 	}
 	
 	/**
-	 * 测试mybatis配置的数据源是否能够回滚
+	 * 测试mybatis配置的数据源是否能够回滚事务
 	 * @param name
 	 * @param age
 	 * @return
@@ -126,12 +172,12 @@ public class IndexController {
 		//http://localhost:8888/tgc/testTransaction?name=testTransaction&age=18
 	}
 
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping("/insert")
 	public String insert(String name, Integer age) {
 		userMapper.insert(name, age);
 		return "success";
-	}
+	}*/
 
 	/**
 	 * 测试分布式事务处理

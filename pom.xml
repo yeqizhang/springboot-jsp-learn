@@ -29,11 +29,26 @@
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		
+		<!-- 引入springJpa的依赖包.  -->
+		<!--spring-boot-starter-data-jpa包含 spring-data-jpa、spring-orm 和 Hibernate 来支持 JPA
+		JPA默认使用Hibernate作为ORM实现，所以，一般使用Spring Data JPA即会使用Hibernate。
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		
 		<!-- 引入mybatis的依赖包. -->

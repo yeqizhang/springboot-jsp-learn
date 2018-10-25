@@ -19,6 +19,9 @@
 四、使用分布式事务解决方案  Atomikos （多数据源） 
 五、定时任务（使用注解）、缓存服务（ehcache。xml 配置，app中激活）、AOP（引入依赖，使用注解）、异步方法（引入依赖，使用注解）
 六、打包部署方法
+七、Junit测试
+@RunWith(SpringJUnit4ClassRunner.class) //SpringJUnit支持，由此引入Spring-Test框架支持！
+@SpringApplicationConfiguration(classes = RunApp.class) //指定我们SpringBoot工程的Application启动类
 ---------------------------------------------------------------------------------------------  
 
 一、配置相关：
@@ -88,6 +91,7 @@
 	    <artifactId>spring-boot-starter-data-jpa</artifactId>
 	</dependency>  
 	另外：mybatis不是orm框架。
+	整合进多数据源分布式事务管理的配置为：  javax.sql.DataSource.SpringDataJpaConfig
  3 mybatis	
          引入mybatis依赖。写mapper类，然后启动类加@MapperScan 
  4 多数据源 
