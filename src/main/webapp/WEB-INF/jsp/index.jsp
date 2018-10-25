@@ -4,9 +4,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<%
+	String ctx = request.getContextPath();
+%>
 <title>Insert title here</title>
 </head>
 <body>
-  springboot整合jsp成功..注意(创建项目一定要为war类型)
+  springboot整合jsp成功..注意(创建项目一定要为war类型) <br>
+  <img src='<%=ctx %>/d.jpg'>
 </body>
 </html>

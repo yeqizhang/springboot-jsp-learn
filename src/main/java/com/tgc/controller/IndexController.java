@@ -59,7 +59,7 @@ public class IndexController {
 	 * @return
 	 */
 	@RequestMapping("/loveyou")
-	public String loveyou() {
+	public String loveyou() {	// http://localhost:8888/tgc/loveyou
 		return "loveyou";
 	}
 	

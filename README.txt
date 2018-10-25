@@ -9,10 +9,10 @@
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
 
-二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理、jsp使用el表达式以及jstl
+二、异常捕获、web视图、静态资源访问（图片等） jsp中使用图片的路径获取、log4j日志管理、jsp使用el表达式以及jstl
  1 全局捕获异常，不返回原始错误信息、返回指定内容。
  2 使用freemarker模板引擎 （此工程因使用jsp而没有使用）、使用jsp页面（springboot官方不推荐，需要使用war打包）。
- 3 静态资源目录名 规则：
+ 3 静态资源目录名 规则、jsp中使用静态资源
  4 log4j，引入依赖和配置文件后后，直接可以使用。  
 
 三、使用jdbctemplate、spring-data-jpa、整合mybatis、多数据源
@@ -75,6 +75,14 @@
 	/resources	
 	/META-INF/resources 
         例如：图片放在static文件夹内，直接浏览器访问  http://localhost:8888/tgc/d.jpg
+   jsp中使用图片：
+   <%
+	String ctx = request.getContextPath();
+	%>
+	<img src='<%=ctx %>/d.jpg'>
+	或者
+   <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+   <img src='${ctx }/d.jpg'>
  4 log4j，引入依赖和配置文件后后，直接可以使用。  
 
 三、使用jdbctemplate、spring-data-jpa、整合mybatis、多数据源
