@@ -1,6 +1,8 @@
 
 package com.tgc.controller;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.tgc.dao.UserDao;
 import com.tgc.db1.dao.UserMapperTest01;
@@ -58,6 +61,19 @@ public class IndexController {
 	@RequestMapping("/loveyou")
 	public String loveyou() {
 		return "loveyou";
+	}
+	
+	/**
+	 * 使用el表达式 以及jstl
+	 * @return
+	 */
+	@RequestMapping("/list")
+	public ModelAndView  list() {
+		List<User> list = userDao.findAll();
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("list", list);
+		return mav;
+		//http://localhost:8888/tgc/list
 	}
 	
 	//==========使用jdbctemplate===============

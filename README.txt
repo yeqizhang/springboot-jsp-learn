@@ -9,7 +9,7 @@
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
 
-二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理
+二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理、jsp使用el表达式以及jstl
  1 全局捕获异常，不返回原始错误信息、返回指定内容。
  2 使用freemarker模板引擎 （此工程因使用jsp而没有使用）、使用jsp页面（springboot官方不推荐，需要使用war打包）。
  3 静态资源目录名 规则：
@@ -54,16 +54,21 @@
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
 
-二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理
+二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理、jsp使用el表达式以及jstl
  1 全局捕获异常，不返回原始错误信息、返回指定内容。
   @ControllerAdvice
  2 使用freemarker模板引擎 （此工程因使用jsp而没有使用）、使用jsp页面（springboot官方不推荐，需要使用war打包）。
           引入依赖即可。可自定义路径以及文件后缀<!-- 引入freeMarker的依赖包. -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
+		<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
    jsp文件在 src\main\webapp下。
+          引入jsp依赖后可直接使用el表达式，但使用jstl还需要依赖：
+    	<dependency>
+		   <groupId>javax.servlet</groupId>
+		   <artifactId>jstl</artifactId>
+		</dependency>
  3 静态资源目录名 规则：
 	/static
 	/public
