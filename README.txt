@@ -20,8 +20,6 @@
 五、定时任务（使用注解）、缓存服务（ehcache。xml 配置，app中激活）、AOP（引入依赖，使用注解）、异步方法（引入依赖，使用注解）
 六、打包部署方法
 七、Junit测试
-@RunWith(SpringJUnit4ClassRunner.class) //SpringJUnit支持，由此引入Spring-Test框架支持！
-@SpringApplicationConfiguration(classes = RunApp.class) //指定我们SpringBoot工程的Application启动类
 ---------------------------------------------------------------------------------------------  
 
 一、配置相关：
@@ -142,8 +140,6 @@ Apply→Run
 
 打包成功 war包在 target目录下。
 *********************************************************************************
-
-
 …………………………………………………………………………打包方式为jar 访问jsp为404的解决方法………………………………………………………………………………………………………
 
 <build>
@@ -208,5 +204,9 @@ Apply→Run
 原文：https://blog.csdn.net/zhaoyachao123/article/details/79722519 
 版权声明：本文为博主原创文章，转载请附上博文链接！
 ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………
+
+七、Junit测试
+@RunWith(SpringJUnit4ClassRunner.class) //SpringJUnit支持，由此引入Spring-Test框架支持！
+@SpringApplicationConfiguration(classes = RunApp.class) //指定我们SpringBoot工程的Application启动类
 
 
