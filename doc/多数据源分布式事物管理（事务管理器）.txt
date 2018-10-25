@@ -1,0 +1,196 @@
+当只有一个数据源的时候，添加标签@EnableTransactionManagement,然后在dateBaseConfig里添加
+
+    @Bean(name = "transactionManager")
+    public DataSourceTransactionManager transactionManager() {
+        log.info("-------------------- transactionManager init ---------------------");
+        return new DataSourceTransactionManager(writeDataSource());
+    }
+
+就可以了。
+后来添加多数据源以后，发现这样写事物不起作用了，所以决定记录一下多数据源的事物配置。
+
+1、引入jar包
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jta-atomikos</artifactId>
+		</dependency>
+
+2、配置数据源，test.properties文件
+ 
+
+# 主数据源，默认的
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3308/test
+spring.datasource.username=root
+spring.datasource.password=123456
+ 
+spring.datasource.minPoolSize = 3
+spring.datasource.maxPoolSize = 25
+spring.datasource.maxLifetime = 20000
+spring.datasource.borrowConnectionTimeout = 30
+spring.datasource.loginTimeout = 30
+spring.datasource.maintenanceInterval = 60
+spring.datasource.maxIdleTime = 60
+spring.datasource.validationQuery = select 1
+
+3、创建对应的类
+
+package com.demo.model;
+ 
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+ 
+/**
+ * Created by huguoju on 2017/3/27.
+ */
+@Configuration
+@Data
+@ConfigurationProperties(prefix = "spring.datasource",locations = "classpath:test.properties")
+public class DBConfig {
+    private String driverClassName;
+    private String url;
+    private String username;
+    private String password;
+    /** min-pool-size 最小连接数 **/
+    private int minPoolSize;
+    /** max-pool-size 最大连接数 **/
+    private int maxPoolSize;
+    /**  max-lifetime 连接最大存活时间 **/
+    private int maxLifetime;
+    /** borrow-connection-timeout 获取连接失败重新获等待最大时间，在这个时间内如果有可用连接，将返回 **/
+    private int borrowConnectionTimeout;
+    /** login-timeout java数据库连接池，最大可等待获取datasouce的时间 **/
+    private int loginTimeout;
+    /** maintenance-interval 连接回收时间 **/
+    private int maintenanceInterval;
+    /** max-idle-time 最大闲置时间，超过最小连接池连接的连接将将关闭 **/
+    private int maxIdleTime;
+    /** test-query 测试SQL **/
+    private String validationQuery;
+}
+
+4、定义数据源bean
+@Bean(name="writeDataSource", destroyMethod = "close", initMethod="init")
+    @Primary
+    public DataSource writeDataSource() throws SQLException {
+        log.info("-------------------- writeDataSource init ---------------------");
+//        DruidXADataSource druidXADataSource=new DruidXADataSource();
+//        druidXADataSource.setDriverClassName(dbConfig.getDriverClassName());
+//        druidXADataSource.setUrl(dbConfig.getUrl());
+//        druidXADataSource.setPassword(dbConfig.getPassword());
+//        druidXADataSource.setUsername(dbConfig.getUsername());
+        MysqlXADataSource mysqlXaDataSource = new MysqlXADataSource();
+        mysqlXaDataSource.setUrl(dbConfig.getUrl());
+        mysqlXaDataSource.setPinGlobalTxToPhysicalConnection(true);
+        mysqlXaDataSource.setPassword(dbConfig.getPassword());
+        mysqlXaDataSource.setUser(dbConfig.getUsername());
+        mysqlXaDataSource.setPinGlobalTxToPhysicalConnection(true);
+        AtomikosDataSourceBean xaDataSource = new AtomikosDataSourceBean();
+        xaDataSource.setXaDataSource(mysqlXaDataSource);
+        xaDataSource.setUniqueResourceName("writeDataSource");
+ 
+        xaDataSource.setMinPoolSize(dbConfig.getMinPoolSize());
+        xaDataSource.setMaxPoolSize(dbConfig.getMaxPoolSize());
+        xaDataSource.setMaxLifetime(dbConfig.getMaxLifetime());
+        xaDataSource.setBorrowConnectionTimeout(dbConfig.getBorrowConnectionTimeout());
+        /** login-timeout java数据库连接池，最大可等待获取datasouce的时间 **/
+        xaDataSource.setLoginTimeout(dbConfig.getLoginTimeout());
+        xaDataSource.setMaintenanceInterval(dbConfig.getMaintenanceInterval());
+        xaDataSource.setMaxIdleTime(dbConfig.getMaxIdleTime());
+        xaDataSource.setTestQuery(dbConfig.getValidationQuery());
+        return xaDataSource;
+    }
+
+5、定义事物
+package com.demo.mybatis;
+ 
+import com.atomikos.icatch.jta.UserTransactionImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.jta.JtaTransactionManager;
+ 
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+ 
+/**
+ * 自定义事务
+ * Created by huguoju on 2016/12/29.
+ */
+@Configuration
+@ComponentScan
+@EnableTransactionManagement
+@Slf4j
+public class DataSourceTransactionManager{
+    /**
+     * 自定义事务
+     * MyBatis自动参与到spring事务管理中，无需额外配置，只要org.mybatis.spring.SqlSessionFactoryBean引用的数据源与DataSourceTransactionManager引用的数据源一致即可，否则事务管理会不起作用。
+     * @return
+     */
+    @Bean(name = "userTransaction")
+    public UserTransaction userTransaction() throws Throwable {
+        UserTransactionImp userTransactionImp = new UserTransactionImp();
+        userTransactionImp.setTransactionTimeout(10000);
+        return userTransactionImp;
+    }
+    @Bean(name = "atomikosTransactionManager", initMethod = "init", destroyMethod = "close")
+    public TransactionManager atomikosTransactionManager() throws Throwable {
+        UserTransactionManager userTransactionManager = new UserTransactionManager();
+        userTransactionManager.setForceShutdown(false);
+        return userTransactionManager;
+    }
+    
+    @Bean(name = "transactionManager")
+    @DependsOn({ "userTransaction", "atomikosTransactionManager" })
+    public PlatformTransactionManager transactionManager() throws Throwable {
+        UserTransaction userTransaction = userTransaction();
+        JtaTransactionManager manager = new JtaTransactionManager(userTransaction,atomikosTransactionManager());
+        return manager;
+    }
+}
+
+
+6、测试
+@ApiOperation("测试事物")
+     @RequestMapping(value = "testTransaction",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+     public void testTransaction() throws Exception {
+ 
+         try{
+             testService.testTransaction();
+         }catch (Exception e){
+             System.out.println("失败："+e.getMessage());
+         }
+     }
+
+    @Override
+    public void testTransaction() throws Exception {
+        final User user1=User.builder()
+                .userCode(11112)
+                .isOldUser("1")
+                .userName("测试")
+                .userStyle(1)
+                .userType("1")
+                .createdDate(new Date())
+                .updatedDate(new Date())
+                .isDeleted((short) 0)
+                .mobileNumber("18311111111").build();
+          userMapper.insert(user1);
+        throw new RuntimeException("插入失败");
+    }
+
+这样执行不会插入数据库，将
+throw new RuntimeException("插入失败");
+这句注释会插入。
+
+--------------------- 
+作者：天使没吃饱 
+来源：CSDN 
+原文：https://blog.csdn.net/u011493599/article/details/66973138 
+版权声明：本文为博主原创文章，转载请附上博文链接！
