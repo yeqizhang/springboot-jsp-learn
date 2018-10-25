@@ -48,7 +48,7 @@
  4 （多环境配置）在主配置文件中指定 开发环境、生产环境、测试环境 的配置文件。
   spring.profiles.active=prod
  5 使用@Value注入配置文件的配置。 
-  @Value("${my。name}")	//取配置文件中的配置
+  @Value("${my.name}")	//取配置文件中的配置
   private String myname;
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
