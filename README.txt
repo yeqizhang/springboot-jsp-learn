@@ -128,7 +128,7 @@
            依赖spring-boot-starter-aop，   使用@Aspect@Component注解切面类
   4 异步方法 使用@Async注解。 
 六、打包部署方法：
-Eclipse中运行mvn package 命令打包（右键项目-show in-Terminal ,电脑的那个图标是cmd命令）  （此方式没通过，采用下面的解决方案右击项目→Run As→Run Configurations→Maven Bulid→New）
+Eclipse中运行mvn package 命令打包（右键项目-show in-Terminal ,电脑的那个图标是cmd命令）  （此方式没通过，采用下面的解决方案右击项目→Run As→Run Configurations→Maven Bulid→New解决）
 使用命令行java -jar 包名 来启动运行。
 譬如 java -jar springboot-jsp-learn-0.0.1-SNAPSHOT.war 
 java -jar springboot-jsp-learn-0.0.1-SNAPSHOT.jar
@@ -146,7 +146,8 @@ target目录下输出 编译文件 jar war
 右击项目→Run As→Run Configurations→Maven Bulid→New
 
 Name 自定义 
-Base directory D:\workspace\mavenstarter\mavenstarter（项目所在文件夹） 
+Base directory D:\workspace\mavenstarter\mavenstarter（项目所在文件夹,"browse file system"按钮选择） 
+  （记得一定要选项目所在文件夹，譬如你今天打包一个项目，再打包另外一个项目则要重新选择）
 Goals：clean package
 
 Apply→Run
@@ -154,7 +155,8 @@ Apply→Run
 打包成功 war包在 target目录下。
 *********************************************************************************
 …………………………………………………………………………打包方式为jar 访问jsp为404的解决方法………………………………………………………………………………………………………
-
+此方式可以打jar包，但是建项目的时候还是需要指定为war，然后再改pom.xml中的<packaging>war</packaging>为<packaging>jar</packaging>。
+这样就可以打jar包。
 <build>
         <plugins>
             <plugin>

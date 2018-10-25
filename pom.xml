@@ -5,6 +5,8 @@
 	<artifactId>springboot-jsp-learn</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>	<!-- 整合jsp，打包方式一定要用war，否则找不到页面。    readme.txt中附解决方案 -->
+	<!-- 建项目的时候还是需要指定为war，建好然后再改pom.xml中的<packaging>war</packaging>为<packaging>jar</packaging>。
+这样就可以打jar包。-->
 	
 	  <!-- 引入SpringBoot父类依赖  -->
 	<parent>
