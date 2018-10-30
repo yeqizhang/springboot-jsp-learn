@@ -26,10 +26,12 @@
  1 注解的使用。 
   @ComponentScan @MapperScan @SpringBootApplication 
   @Controller @RestController @ResponseBody 
-  @Configuration @Component
+  @Configuration @Component http://localhost:8888/tgc/test/index
   
   @EnableAutoConfiguration注解:作用在于让 Spring Boot根据应用所声明的依赖来对 Spring 框架进行自动配置，
   这个注解告诉Spring Boot根据添加的jar依赖猜测你想如何配置Spring。由于spring-boot-starter-web添加了Tomcat和Spring MVC，所以auto-configuration将假定你正在开发一个web应用并相应地对Spring进行设置。
+ 
+  @RequestMapping写在类名上可以设置类名的访问路径。
  2 使用yml配置文件。
   ym可以树形（不会重复spring.datasource.username、spring.datasource.password这样的重复spring.datasource）
  3 pom依赖配置，打包配置。   起步依赖.
