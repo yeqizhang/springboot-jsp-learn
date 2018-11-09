@@ -16,10 +16,11 @@
  4 log4j，引入依赖和配置文件后后，直接可以使用。  
 
 三、使用jdbctemplate、spring-data-jpa、整合mybatis、多数据源
-四、使用分布式事务解决方案  Atomikos （多数据源） 
+四、使用分布式事务解决方案  Atomikos （多数据源）   (O tuo mi kuo si)
 五、定时任务（使用注解）、缓存服务（ehcache。xml 配置，app中激活）、AOP（引入依赖，使用注解）、异步方法（引入依赖，使用注解）
 六、打包部署方法
 七、Junit测试
+八、redis缓存
 ---------------------------------------------------------------------------------------------  
 
 一、配置相关：
@@ -50,6 +51,7 @@
 	</dependency>
  4 （多环境配置）在主配置文件中指定 开发环境、生产环境、测试环境 的配置文件。
   spring.profiles.active=prod
+  	只能指定一个，如果连续指定两个spring.profiles.active，则以后面那个为主。
  5 使用@Value注入配置文件的配置。 
   @Value("${my.name}")	//取配置文件中的配置
   private String myname;
@@ -121,14 +123,23 @@
            
 五、定时任务（使用注解）、缓存服务（ehcache。xml 配置，app中激活）、AOP（引入依赖，使用注解）、异步方法（引入依赖，使用注解）
   1 定时任务  直接使用@Scheduled注解类方法，类使用@Component组件
+  	如果日志级别是debug，启动时会提示一个错误：
+  	No qualifying bean of type [org.springframework.scheduling.TaskScheduler] is defined
+  	但正常运行，解决办法： 在log4j文件中加入log4j.logger.org.springframework.scheduling = INFO 
+  
   2 缓存服务 
              引用spring-boot-starter-cache，给mapper注解@CacheConfig、方法上使用@Cacheable，配置ehcache.xml，
              清除缓存：cacheManager.getCache("baseCache").clear(); 
      @Autowired
 	 private CacheManager cacheManager;
+	 
+	 cacheNames="cache1"，  name是必须在ehcache。xml中配置过的。
+	 
+	 要点：@Cacheable(value="必须使用ehcache.xml已经定义好的缓存名称，否则会抛异常")
   3 AOP 
            依赖spring-boot-starter-aop，   使用@Aspect@Component注解切面类
   4 异步方法 使用@Async注解。 
+  
 六、打包部署方法：
 Eclipse中运行mvn package 命令打包（右键项目-show in-Terminal ,电脑的那个图标是cmd命令）  （此方式没通过，采用下面的解决方案右击项目→Run As→Run Configurations→Maven Bulid→New解决）
 使用命令行java -jar 包名 来启动运行。
@@ -226,4 +237,38 @@ Apply→Run
 @RunWith(SpringJUnit4ClassRunner.class) //SpringJUnit支持，由此引入Spring-Test框架支持！
 @SpringApplicationConfiguration(classes = RunApp.class) //指定我们SpringBoot工程的Application启动类
 
+套件测试  @RunWith(Suite.class) ，几个类一起测试。
+https://blog.csdn.net/qq_35915384/article/details/80227297
+
+八、redis缓存
+	切换使用redis只要取消掉注释：（自己研究切换是为了在同一个工程中放两个缓存方案 demo）
+	#spring.profiles.active=redis
+	#spring.cache.type=REDIS
+
+	<!-- redis 依赖 -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-redis</artifactId>
+    </dependency>
+	
+	@Cacheable(value = "cache2", key = "#id")
+	public User findById(int id){
+		User user = userDao.findOne(id);
+		System.err.println("第一次查询走数据库。。。");
+		return user;
+	}
+	使用@CacheEvict注解清除缓存的方法必须是controller层直接调用，service里间接调用不生效。
+	
+	没有引入缓存中间件的话，springboot会使用SimpleCacheConfiguration。所以没有引入ehcahe、redis依赖时就会默认使用SimpleCacheConfiguration缓存实现。
+	（测试使用自带的缓存容器，则将ehcache和redis的依赖都要注释掉。启动项目时可见以下自动配置的报告：
+	 SimpleCacheConfiguration matched
+      - Automatic cache type (CacheCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cache.CacheManager; SearchStrategy: all) found no beans (OnBeanCondition)
+	说明用的是自身的。 或者使用  spring.cache.type=Simple 也制定使用springboot自带的。
+	）
+	
+	
+
+	
+	
 

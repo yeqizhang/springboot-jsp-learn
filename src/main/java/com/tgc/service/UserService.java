@@ -3,6 +3,8 @@ package com.tgc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,5 +93,26 @@ public class UserService {
 		int i = 1 / 0;	//异常
 		return "success";
 	}
+	
+	//value 属性是必需要有的，它表示当前方法的返回值会被存在哪个Cache 上，对应的是Cache 的名称。当然前面说过可以同时缓存在多个缓存上。
+	//value并不是说指定的是redis容器还是ehcache
+	@Cacheable(value = "cache2", key = "#id")	
+	//如果使用echache，这里的value必须是ehcache中配置的name。 spring也自带缓存组件，无需提前配置value。 redis也无需提前配置此value。
+	public User findById(int id){
+		User user = userDao.findOne(id);	//最好实现序列化 Serializable 接口，这样方便切换到分布式的各个缓存系统。
+		System.err.println("第一次查询走数据库。。。");	  // 使用redis数据库删除后，不会再到此方法里。
+		return user;
+	}
 
+	//下列方法无效原因：使用@CacheEvict注解的方法必须是controller层直接调用，service里间接调用不生效
+	/**
+     * allEntries = true: 清空cache2里的所有缓存
+     * 
+     *  allEntries = true: 清空缓存book1里的所有值
+    	allEntries = false: 默认值，此时只删除key对应的值
+     */
+    /*@CacheEvict(cacheNames="cache2", allEntries=true)
+    public void clearCache2All(){	//此注解暂时没用。 使用redis数据库删除有效果。
+        System.out.println("cache2 clear");
+    }*/
 }

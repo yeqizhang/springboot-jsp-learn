@@ -9,11 +9,17 @@
 		timeToIdleSeconds="120" timeToLiveSeconds="120"
 		memoryStoreEvictionPolicy="LRU" overflowToDisk="false" />
 
-	<cache name="baseCache" maxElementsInMemory="10000"
+	<cache name="cache1" maxElementsInMemory="10000"
 		maxElementsOnDisk="100000" />
 		
+	<cache name="cache2" maxElementsInMemory="10000"
+		maxElementsOnDisk="100000" />
+	
+	<cache name="cache3" maxElementsInMemory="10000"
+		maxElementsOnDisk="100000" />	
+		
  <!--  
-       name:缓存名称。  
+       name: 缓存名称,cache的唯一标识(ehcache会把这个cache放到HashMap里)  
        maxElementsInMemory：硬盘缓存最大个数。  
 	   maxElementsOnDisk：硬盘最大缓存个数。  
        eternal:对象是否永久有效，一但设置了，timeout将不起作用。  

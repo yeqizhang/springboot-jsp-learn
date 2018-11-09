@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -233,6 +234,28 @@ public class IndexController {
 		INSERT INTO `users` VALUES ('1', 'tgc1', '26');
 		*/
 	}
+	
+	/**
+	 * 测试redis缓存
+	 * 
+	 * 调用后第一次会进入userService.findById打印里面的语句
+	 * 第二次直接查缓存，不进入userService.findById方法体类。
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/testRedisCache")
+	public User testRedisCache(Integer id) {
+		log.info("####findById()####id:" + id);
+		return userService.findById(id);
+		//http://localhost:8888/tgc/testRedisCache?id=1
+		/*
+		恢复数据：
+		use test1;
+		INSERT INTO `users` VALUES ('1', 'tgc1', '26');
+		*/
+	}
 
 	@ResponseBody
 	@RequestMapping("/insertTest002")
@@ -273,14 +296,42 @@ public class IndexController {
 	}
 
 	/**
-	 * 给前台调用清除缓存的方法
+	 * 给前台调用清除缓存的方法1 （对redis不管用。。）
 	 * @param key
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/removeKey")
 	public String removeKey(String key) {
-		cacheManager.getCache("baseCache").clear();
+		System.out.println(cacheManager.getCacheNames());;
+		//cacheManager.getCache("ehcache1").clear();
+		cacheManager.getCache("cache1").clear();	//ehcache使用这个时，如果没有对应的cache（例如cache1），则会报错
+		cacheManager.getCache("cache2").clear();
+		//但不能清除redis缓存
+		
 		return "success";
+		//http://localhost:8888/tgc/removeKey
 	}
+	
+	/**
+	 * 给前台调用清除缓存的方法2  (对ehcache、redis等都可以用)
+	 * 
+	 * allEntries = true: 清空cache2里的所有缓存
+     * 
+     *  allEntries = true: 清空缓存book1里的所有值
+    	allEntries = false: 默认值，此时只删除key对应的值
+	 * 
+	 * @param key
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/clearCache2All")
+	@CacheEvict(cacheNames={"cache1","cache2","cache3"}, allEntries=true)
+	public String clearCache2All(String key) {
+		//userService.clearCache2All();
+		//使用@CacheEvict注解的方法必须是controller层直接调用，service里间接调用不生效
+		return "success";
+		//http://localhost:8888/tgc/clearCache2All
+	}
+	    
 }

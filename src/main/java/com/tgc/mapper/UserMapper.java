@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import com.tgc.entity.User;
 
-@CacheConfig(cacheNames = "baseCache")
+@CacheConfig(cacheNames = "cache3")	//
 public interface UserMapper {
 	@Select("SELECT * FROM USERS WHERE NAME = #{name}")
 	@Cacheable

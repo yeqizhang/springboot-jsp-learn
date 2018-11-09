@@ -85,6 +85,25 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j</artifactId>
         </dependency>
+        
+        <dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency> 
+        
+        <!-- redis 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-redis</artifactId>
+        </dependency>
+        
+        <!-- security -->
+        <!-- 首次引入是为了解决启动时这个错（不影响使用）java.lang.ClassNotFoundException: org.springframework.security.config.annotation.web.configuration.EnableWebSecurity  -->
+        <!-- 引入会需要登录 -->
+        <!-- <dependency>
+		 	<groupId>org.springframework.boot</groupId>
+		 	<artifactId>spring-boot-starter-security</artifactId>
+		</dependency> -->
 
 	</dependencies>
 
