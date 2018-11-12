@@ -42,9 +42,11 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.3.3.RELEASE</version>
 	</parent>
+	
 	<!-- SpringBoot 核心组件 -->
 	<!--（起步依赖） 1.3.3 从 spring-boot-starterparent继承版本号-->
 	<!-- springboot-web组件 springmvc+spring+mybatis -->
+	<!-- web组件依赖tomcat组件 -->
 	<dependency>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-web</artifactId>
