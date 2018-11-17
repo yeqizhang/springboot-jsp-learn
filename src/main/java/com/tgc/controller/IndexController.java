@@ -21,6 +21,11 @@ import com.tgc.entity.User;
 import com.tgc.mapper.UserMapper;
 import com.tgc.service.UserService;
 
+/**
+ * 此类的分布式事务，适用于单机多数据源的情况。
+ * @author Administrator
+ *
+ */
 @Controller
 public class IndexController {
 	private static Logger log = Logger.getLogger(IndexController.class);
@@ -150,7 +155,7 @@ public class IndexController {
 	
 	/**
 	 * 使用Atomikos的userDao 插入数据库 test1,使用jdbcTemplate2插入数据库  test2
-	 * 测试是否事务回滚。    可以回滚！！！！！！  
+	 * 测试是否分布式事务回滚。    可以回滚！！！！！！  
 	 * @param name
 	 * @param age
 	 * @return

@@ -1,4 +1,4 @@
-package com.tgc.datasource;
+package com.tgc.config;
   
 import javax.sql.DataSource;
 
@@ -16,13 +16,14 @@ import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
  
 /**
- * 给Mybatis配置数据源  (使用这个会导致Atomikos无法事务管理??)
+ * 为指定的mapper包注入不同的sqlSessionTemplate sqlSessionFactory来绑定数据源
+ * 给Mybatis配置数据源   使用test数据库
  * @author Administrator
  *
  */
 @Configuration
 @MapperScan(basePackages ={"com.tgc.mapper"}, sqlSessionFactoryRef = "masterSqlSessionFactory")
-public class MybatisDbMasterConfig {
+public class MybatisDbsZeroConfig {
     
    /*
     @Bean(name = "masterDataSource")
@@ -32,29 +33,8 @@ public class MybatisDbMasterConfig {
     }
     */
     
-    /**
-     * 使用Atomikos 的 DataSource实现
-     * @param dbConfigInfo
-     * @return
-     */
-	@Bean(name = "masterDataSource")
-    public DataSource dataSource2(DbConfigInfo dbConfigInfo) {	  
-		MysqlXADataSource mysqlXaDataSource = new MysqlXADataSource();
-		mysqlXaDataSource.setUrl(dbConfigInfo.getUrl());
-		mysqlXaDataSource.setPinGlobalTxToPhysicalConnection(true);
-		mysqlXaDataSource.setPassword(dbConfigInfo.getPassword());
-		mysqlXaDataSource.setUser(dbConfigInfo.getUsername());
-		mysqlXaDataSource.setPinGlobalTxToPhysicalConnection(true);
-
-		AtomikosDataSourceBean xaDataSource = new AtomikosDataSourceBean();
-		xaDataSource.setXaDataSource(mysqlXaDataSource);
-		xaDataSource.setUniqueResourceName("masterDataSource");
-
-		return xaDataSource;
-    }
-  
     @Bean(name = "masterSqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("masterDataSource") DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSourceZero") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
         //绑定entity和mapper映射？
@@ -95,7 +75,7 @@ public class MybatisDbMasterConfig {
      */
     @Bean(name = "primaryJdbcTemplate")
     public JdbcTemplate primaryJdbcTemplate(
-            @Qualifier("masterDataSource") DataSource dataSource) {
+            @Qualifier("dataSourceZero") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
     

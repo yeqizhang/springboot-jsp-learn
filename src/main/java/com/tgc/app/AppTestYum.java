@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @ComponentScan(basePackages = { "com.tgc.yml.controller" })
 @EnableAutoConfiguration
-public class AppTestYm {
+public class AppTestYum {
 
 	/*public static void main(String[] args) {
 		// 主函数运行springboot项目

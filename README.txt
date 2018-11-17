@@ -16,11 +16,13 @@
  4 log4j，引入依赖和配置文件后后，直接可以使用。  
 
 三、使用jdbctemplate、spring-data-jpa、整合mybatis、多数据源
-四、使用分布式事务解决方案  Atomikos （多数据源）   (O tuo mi kuo si)
+四、使用分布式事务解决方案  Atomikos （多数据源）   (O tuo mi kuo si) ，注意Atomikos的适用范围。
 五、定时任务（使用注解）、缓存服务（ehcache。xml 配置，app中激活）、AOP（引入依赖，使用注解）、异步方法（引入依赖，使用注解）
 六、打包部署方法
 七、Junit测试
 八、redis缓存
+九、使用druid数据库连接池、结合Atomikos多数据源
+
 ---------------------------------------------------------------------------------------------  
 
 一、配置相关：
@@ -108,17 +110,20 @@
 	    <artifactId>spring-boot-starter-data-jpa</artifactId>
 	</dependency>  
 	另外：mybatis不是orm框架。
-	整合进多数据源分布式事务管理的配置为：  javax.sql.DataSource.SpringDataJpaConfig
+	整合进多数据源分布式事务管理的配置为：  javax.sql.config.SpringDataJpaConfig
  3 mybatis	
          引入mybatis依赖。写mapper类，然后启动类加@MapperScan 
  4 多数据源 
  	@Configuration 
  	@MapperScan(basePackages = "", sqlSessionFactoryRef = "")
- 	basePackages该包下使用此sqlSessionFactoryRef数据源
+ 	basePackages该包下使用此sqlSessionFactoryRef配置的数据源
 四、使用分布式事务解决方案  Atomikos （多数据源） 
-       引入Atomikos依赖，创建DataSource的实现AtomikosDataSourceBean对象即可。（创建两个Atomikos数据源，Atomikos容器能解决事务处理问题）
-       注意：Atomikos的数据源配置中不要实现 TransactionManager方法，其它的数据源比如mybatis数据源则需要重新写数据源配置，目前采用也加入到Atomikos容
-       器下管理数据源。
+	同一个web服务器，多个数据库，可以使用Atomikos，
+	跨越多个web服务器的事务，如果远程调用支持事务传播，那么使用JTA就可以。
+	使用MQ来处理“多应用单数据源”分布式事务（集群或者负载均衡下的事务管理）。
+       引入Atomikos依赖，创建DataSource的实现AtomikosDataSourceBean对象即可。
+       （使用mysql自带的MysqlXADataSource，或者使用druid的DruidXADataSource。创建两个Atomikos数据源，Atomikos容器能解决事务处理问题）
+       注意：Atomikos的数据源配置中不要实现 TransactionManager方法，其它的数据源比如mybatis数据源则需要重新写数据源配置，目前采用也加入到Atomikos容器下管理数据源。
      以下的解决方案待参考。    
        问题参考： https://blog.csdn.net/u011493599/article/details/66973138
        文章为 doc/多数据源分布式事物管理（事务管理器）.txt    
@@ -269,8 +274,20 @@ https://blog.csdn.net/qq_35915384/article/details/80227297
 	说明用的是自身的。 或者使用  spring.cache.type=Simple 也制定使用springboot自带的。
 	）
 	
-	
-
-	
+九、使用druid数据库连接池
+	1 引入依赖
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.0.5</version>
+		</dependency>	
+	2 配置web管理
+		DruidConfiguration.java
+	3 绑定数据源
+		DruidXA.java配置了多个数据源bean,并且使用Atomikos进行多数据源分布式事务管理，DruidXADataSource创建数据源。   
+		项目中其它地方不能够使用MysqlXADataSource，不能同时使用。
+		注意Druid会有很多版本的问题，有时候出现问题可以换个版本。（之前的1.0.5报了mysql没有对应方法的错误，可能与mysql驱动包版本有关系。）
+	4 配置spring监控
+		启动类使用注解@ImportResource(locations = { "classpath:druid-bean.xml" })	
 	
 
