@@ -8,7 +8,7 @@
  5 使用@Value注入配置文件的配置。 
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
-
+ 8 启动banner信息设置.
 二、异常捕获、web视图、静态资源访问（图片等） jsp中使用图片的路径获取、log4j日志管理、jsp使用el表达式以及jstl
  1 全局捕获异常，不返回原始错误信息、返回指定内容。
  2 使用freemarker模板引擎 （此工程因使用jsp而没有使用）、使用jsp页面（springboot官方不推荐，需要使用war打包）。
@@ -61,7 +61,10 @@
   private String myname;
  6 配置对象初始化注册. @EnableConfigurationProperties
  7 端口以及context-path配置.   
-
+ 8 启动banner信息设置
+	在 Spring Boot 1.0 中如何更换启动 Banner，其实都很简单，只需要在src/main/resources路径下新建一个banner.txt文件，banner.txt中填写好需要打印的字符串内容即可。
+	一般情况下，我们会借助第三方工具帮忙转化内容，如网站http://www.network-science.de/ascii/将文字转化成字符串，网站：http://www.degraeve.com/img2txt.php
+	可以将图片转化成字符串。
 二、异常捕获、web视图、静态资源访问（图片等）、log4j日志管理、jsp使用el表达式以及jstl
  1 全局捕获异常，不返回原始错误信息、返回指定内容。
   @ControllerAdvice

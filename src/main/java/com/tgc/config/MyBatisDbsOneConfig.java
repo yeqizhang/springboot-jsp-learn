@@ -13,9 +13,12 @@ import org.springframework.context.annotation.Primary;
 
 /**
  * 为指定的mapper包注入不同的sqlSessionTemplate sqlSessionFactory来绑定数据源
+ * 
+ * 总结：首先创建DataSource，然后创建SqlSessionFactory，（再创建事务，这里被注释，同一由Atomikos来进行事务管理），最后包装到SqlSessionTemplate中。dao层和xml需要按照库来分在不同的目录，比如：test1库dao层在com.neo.mapper.test1包下，test2库在com.neo.mapper.test1
+ * 
  * @author Administrator
  *
- *SqlSessionFactoryBuilder：build方法创建SqlSessionFactory实例。
+ * SqlSessionFactoryBuilder：build方法创建SqlSessionFactory实例。
  * SqlSessionFactory：创建SqlSession实例的工厂。
  * SqlSession：用于执行持久化操作的对象，类似于jdbc中的Connection。
  * SqlSessionTemplate：MyBatis提供的持久层访问模板化的工具，线程安全，可通过构造参数或依赖注入SqlSessionFactory实例
@@ -43,6 +46,13 @@ public class MyBatisDbsOneConfig {
 		bean.setDataSource(dataSource);
 		return bean.getObject();
 	}
+	
+	//这里不再创建事务管理器
+//	@Bean(name = "testTransactionManager")
+//    @Primary
+//    public DataSourceTransactionManager testTransactionManager(@Qualifier("dataSourceOne") DataSource dataSource) {
+//        return new DataSourceTransactionManager(dataSource);
+//    }
 
 	@Bean(name = "testSqlSessionTemplate")
 	@Primary
