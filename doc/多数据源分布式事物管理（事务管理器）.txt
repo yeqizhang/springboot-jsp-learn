@@ -158,7 +158,7 @@ public class DataSourceTransactionManager{
 
 
 6、测试
-@ApiOperation("测试事物")
+@ApiOperation("测试事务")
      @RequestMapping(value = "testTransaction",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
      public void testTransaction() throws Exception {
  

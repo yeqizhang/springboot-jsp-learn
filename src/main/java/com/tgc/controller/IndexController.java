@@ -48,7 +48,7 @@ public class IndexController {
 	@Autowired
 	private CacheManager cacheManager;
 	
-	@Value("${my。name}")	//取配置文件中的配置
+	@Value("${my.name}")	//取配置文件中的配置
 	private String myname;
 
 	/**

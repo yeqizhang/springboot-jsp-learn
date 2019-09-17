@@ -148,7 +148,7 @@
 	 要点：@Cacheable(value="必须使用ehcache.xml已经定义好的缓存名称，否则会抛异常")
   3 AOP 
            依赖spring-boot-starter-aop，   使用@Aspect@Component注解切面类
-  4 异步方法 使用@Async注解。 
+  4 异步方法 使用@Async注解。 （异步方法即不阻塞执行的一个方法）
   
 六、打包部署方法：
 Eclipse中运行mvn package 命令打包（右键项目-show in-Terminal ,电脑的那个图标是cmd命令）  （此方式没通过，采用下面的解决方案右击项目→Run As→Run Configurations→Maven Bulid→New解决）
