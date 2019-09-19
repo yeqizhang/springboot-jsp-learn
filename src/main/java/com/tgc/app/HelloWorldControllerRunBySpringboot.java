@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Administrator
  *
  */
-//标识该接口全部返回json格式。
 @EnableAutoConfiguration	//此注解可以让springboot用tomcat运行
-@RestController
+@RestController		//标识该接口全部返回json格式。
 public class HelloWorldControllerRunBySpringboot {
 	
 	/*
+	//去掉此注释
 	public static void main(String[] args) {
 		//主函数运行springboot项目
 		SpringApplication.run(HelloWorldControllerRunBySpringboot.class, args);
