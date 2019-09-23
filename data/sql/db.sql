@@ -2,6 +2,9 @@ CREATE DATABASE `test` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
 CREATE DATABASE `test1` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
 CREATE DATABASE `test2` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
 
+-- ----------------------------
+-- create table: users
+-- ----------------------------
 use test;
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `users`;
