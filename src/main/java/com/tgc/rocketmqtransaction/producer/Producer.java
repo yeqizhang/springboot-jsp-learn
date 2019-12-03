@@ -34,12 +34,12 @@ public class Producer {
 				String tag = msg.getTags();
 				
 				if (tag.equals("Transaction1")) {
-					System.out.println("这里处理业务逻辑,比如操作数据库，失败情况下进行回滚");
+					System.out.println("这里处理业务逻辑,比如操作数据库失败情况下，消息进行回滚");
 					// 如果失败，再次给MQ发送消息
 					/**
 					 * 这里的逻辑是message的标签名为“Transaction1”的消息回滚状态。
 					 */
-					return LocalTransactionState.ROLLBACK_MESSAGE;	//回滚消息
+					return LocalTransactionState.ROLLBACK_MESSAGE;	//发送回滚消息
 				}
 				//除了message的标签名为“Transaction1”的消息回滚，其它的在这里直接返回提交消息的状态。
 				return LocalTransactionState.COMMIT_MESSAGE;
@@ -52,7 +52,7 @@ public class Producer {
 		});
 		
 		/**
-		 * 模拟发送3个message。    在以上代码中tag name = "Transaction1"的消息将被回滚（不会发送到消费者）。
+		 * 模拟发送3个message。    在以上代码中tag name = "Transaction1"的“消息将被回滚”（不会发送到消费者）。
 		 */
 		for (int i = 1; i <= 3; i++) {
 			try {
